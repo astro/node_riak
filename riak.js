@@ -425,6 +425,20 @@ RiakClient.prototype.put = function (bucket, key, message, options, callback) {
     var http_headers = this.headers(options.http_headers),
         out_body;
 
+    if (options.indexes) {
+	for(var k in options.indexes) {
+	    var v = options.indexes[k];
+	    if (v.constructor !== Array)
+		v = [v];
+
+	    if (/_int$/.test(k))
+		http_headers["X-Riak-Index-" + k] = v.join(",");
+	    else if (/_bin$/.test(k))
+		http_headers["X-Riak-Index-" + k] = v.map(function(v1) {
+		    return querystring.escape(v1);
+		}).join(",");
+	}
+    }
     http_headers["Content-Type"] = http_headers["Content-Type"] || "application/json";
     options.http_headers = http_headers;
     options.method = "put";
