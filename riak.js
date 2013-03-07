@@ -431,12 +431,7 @@ RiakClient.prototype.put = function (bucket, key, message, options, callback) {
 	    if (v.constructor !== Array)
 		v = [v];
 
-	    if (/_int$/.test(k))
-		http_headers["X-Riak-Index-" + k] = v.join(",");
-	    else if (/_bin$/.test(k))
-		http_headers["X-Riak-Index-" + k] = v.map(function(v1) {
-		    return querystring.escape(v1);
-		}).join(",");
+	    http_headers["X-Riak-Index-" + k] = v.join(",");
 	}
     }
     http_headers["Content-Type"] = http_headers["Content-Type"] || "application/json";
